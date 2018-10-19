@@ -8,14 +8,14 @@ import io.gatling.core.action.Action
 import io.gatling.core.session.{Expression, Session}
 import io.gatling.core.stats.StatsEngine
 
-case class Action(requestName: Expression[String],
-                               repository: String,
-                               statsEngine: StatsEngine,
-                               nextAction: Action) extends ActionLogging {
+case class GatlingAction(requestName: Expression[String],
+                         repository: String,
+                         statsEngine: StatsEngine,
+                         nextAction: GatlingAction) extends ActionLogging {
 
-  override def next: Action = nextAction
+  override def next: GatlingAction = nextAction
 
-  override def name: String = "FindAction"
+  override def name: String = "Action"
 
   override def execute(session: Session): Unit = {
     val key: Option[String] = session.attributes.get("classifKey").asInstanceOf[Option[String]]
