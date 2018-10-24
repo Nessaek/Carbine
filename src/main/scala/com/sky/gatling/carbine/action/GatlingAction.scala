@@ -1,26 +1,26 @@
 package com.sky.gatling.carbine.action
 
-package com.sky.cel.mapper.perf.gatling.action
-
-import io.gatling.commons.stats.{KO, OK, Status}
+import io.gatling.commons.stats.Status
 import io.gatling.commons.util.ClockSingleton.nowMillis
 import io.gatling.core.action.Action
 import io.gatling.core.session.{Expression, Session}
 import io.gatling.core.stats.StatsEngine
 
-case class GatlingAction(requestName: Expression[String],
-                         repository: String,
+case class GatlingAction[A,B](requestName: Expression[String],
+                              f: A => B,
                          statsEngine: StatsEngine,
-                         nextAction: GatlingAction) extends ActionLogging {
+                         nextAction: Action,
+                              check: (B,B) => Status) extends ActionLogging {
 
-  override def next: GatlingAction = nextAction
+  override def next: Action = nextAction
 
   override def name: String = "Action"
 
   override def execute(session: Session): Unit = {
-    val key: Option[String] = session.attributes.get("classifKey").asInstanceOf[Option[String]]
+    val a: Option[A] = session.attributes.get("nessa").asInstanceOf[Option[A]]
     val start = nowMillis
-    val result: Status = key.flatMap(string => repository.findByClassifKey(string).map(_ => OK)).getOrElse(KO)
+    val b: B = f(a.get)
+    val result: Status = check(b)
     log(start, nowMillis, requestName, result, session, statsEngine)
     nextAction ! session
   }
