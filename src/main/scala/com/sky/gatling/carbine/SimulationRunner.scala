@@ -6,6 +6,7 @@ import io.gatling.commons.validation.Validation
 import io.gatling.core.Predef._
 import io.gatling.core.scenario.Simulation
 import io.gatling.core.session.Expression
+import io.gatling.core.structure.ScenarioBuilder
 
 import scala.collection.immutable
 
@@ -17,5 +18,10 @@ class SimulationRunner[A, B](testName: Expression[String],functionUnderTest: A =
   val config: ProtocolBuilder[Session, Validation[(Expression[String], A => B, (B, B) => Status)]] = ProtocolBuilder(testName,functionUnderTest,checkResult)
 
   val classificationFeeder: immutable.IndexedSeq[Map[String, A]] = for (_ <- 0 until numberOfObjects) yield Map("id" -> feedGenerator.apply())
+
+  val classifKeyFeeder: immutable.IndexedSeq[Map[String, String]] = for (_ <- 0 until numberOfObjects) yield ClassificationService.getId.map(k => Map("classifKey" -> k)).getOrElse(throw new RuntimeException("No keys left"))
+
+
+
 
 }

@@ -14,7 +14,7 @@ class SimulationRunner[A, B](testName: Expression[String],functionUnderTest: A =
 
   val numberOfObjects: Int = 10000
   val numberOfUsers: Int = 1
-  val config: ProtocolBuilder[Session, Validation[(Expression[String], A => B, (B, B) => Status)]] = ProtocolBuilder(testName,functionUnderTest,checkResult)
+  val config: ProtocolBuilder[Session, Validation[(Expression[String], A => B, (B, B) => Status)]] = gatling. ProtocolBuilder(testName,functionUnderTest,checkResult)
 
   val classificationFeeder: immutable.IndexedSeq[Map[String, A]] = for (_ <- 0 until numberOfObjects) yield Map("id" -> feedGenerator.apply())
 
